@@ -1,0 +1,697 @@
+{
+  "name": "adobe-launch",
+  "displayName": "Adobe Launch",
+  "description": "Pull, edit, and push Adobe Launch (Reactor) properties as local JSON + JS files.",
+  "version": "0.12.0",
+  "publisher": "hilton-internal",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#EB1000",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "categories": [
+    "Other",
+    "Linters"
+  ],
+  "keywords": [
+    "adobe",
+    "launch",
+    "tags",
+    "reactor",
+    "analytics",
+    "data collection",
+    "tag management"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/.launch-manifest.json"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "adobeLaunch.pull",
+        "title": "Pull property",
+        "category": "Adobe Launch",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "adobeLaunch.pullPlatform",
+        "title": "Pull AEP schemas, mappings & CJA components",
+        "category": "Adobe Launch",
+        "icon": "$(database)"
+      },
+      {
+        "command": "adobeLaunch.pullFresh",
+        "title": "Re-pull property (discards local changes)",
+        "category": "Adobe Launch"
+      },
+      {
+        "command": "adobeLaunch.pushDryRun",
+        "title": "Preview push (dry run)",
+        "category": "Adobe Launch"
+      },
+      {
+        "command": "adobeLaunch.pushToLibrary",
+        "title": "Push to active library",
+        "category": "Adobe Launch",
+        "icon": "$(cloud-upload)",
+        "enablement": "adobeLaunch.hasLibrary"
+      },
+      {
+        "command": "adobeLaunch.signIn",
+        "title": "Sign in to Adobe",
+        "category": "Adobe Launch"
+      },
+      {
+        "command": "adobeLaunch.signOut",
+        "title": "Sign out",
+        "category": "Adobe Launch"
+      },
+      {
+        "command": "adobeLaunch.setProperty",
+        "title": "Set active property",
+        "category": "Adobe Launch",
+        "icon": "$(list-selection)"
+      },
+      {
+        "command": "adobeLaunch.setLibrary",
+        "title": "Set active library",
+        "category": "Adobe Launch",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "adobeLaunch.buildLibrary",
+        "title": "Build active library",
+        "category": "Adobe Launch",
+        "icon": "$(rocket)",
+        "enablement": "adobeLaunch.hasLibrary"
+      },
+      {
+        "command": "adobeLaunch.selectAllChanges",
+        "title": "Select all changes",
+        "category": "Adobe Launch",
+        "icon": "$(check-all)"
+      },
+      {
+        "command": "adobeLaunch.selectNoChanges",
+        "title": "Deselect all changes",
+        "category": "Adobe Launch",
+        "icon": "$(close-all)"
+      },
+      {
+        "command": "adobeLaunch.goto",
+        "title": "Go to resource…",
+        "category": "Adobe Launch",
+        "icon": "$(search)"
+      },
+      {
+        "command": "adobeLaunch.search",
+        "title": "Search rules & code…",
+        "category": "Adobe Launch",
+        "icon": "$(search)"
+      },
+      {
+        "command": "adobeLaunch.addRuleComponent",
+        "title": "Add trigger/condition/action…",
+        "category": "Adobe Launch",
+        "icon": "$(add)"
+      },
+      {
+        "command": "adobeLaunch.addTrigger",
+        "title": "Add trigger…",
+        "category": "Adobe Launch",
+        "icon": "$(add)"
+      },
+      {
+        "command": "adobeLaunch.addCondition",
+        "title": "Add condition (custom code)",
+        "category": "Adobe Launch",
+        "icon": "$(add)"
+      },
+      {
+        "command": "adobeLaunch.addAction",
+        "title": "Add action (custom code)",
+        "category": "Adobe Launch",
+        "icon": "$(add)"
+      },
+      {
+        "command": "adobeLaunch.newRule",
+        "title": "New rule…",
+        "category": "Adobe Launch",
+        "icon": "$(add)"
+      },
+      {
+        "command": "adobeLaunch.refreshTree",
+        "title": "Refresh",
+        "category": "Adobe Launch",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "adobeLaunch.showStatus",
+        "title": "Show unpushed changes",
+        "category": "Adobe Launch"
+      },
+      {
+        "command": "adobeLaunch.copyResourceId",
+        "title": "Copy resource id",
+        "category": "Adobe Launch",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "adobeLaunch.revealInFinder",
+        "title": "Reveal in Finder",
+        "category": "Adobe Launch"
+      },
+      {
+        "command": "adobeLaunch.editComponentConfig",
+        "title": "Edit config…",
+        "category": "Adobe Launch",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "adobeLaunch.openRawJson",
+        "title": "Open raw JSON",
+        "category": "Adobe Launch"
+      },
+      {
+        "command": "adobeLaunch.diffChange",
+        "title": "Show what changed",
+        "category": "Adobe Launch",
+        "icon": "$(git-compare)"
+      },
+      {
+        "command": "adobeLaunch.revertChange",
+        "title": "Revert to baseline",
+        "category": "Adobe Launch",
+        "icon": "$(discard)"
+      },
+      {
+        "command": "adobeLaunch.revertAllChanges",
+        "title": "Revert all changes",
+        "category": "Adobe Launch",
+        "icon": "$(discard)"
+      },
+      {
+        "command": "adobeLaunch.openWalkthrough",
+        "title": "Open setup walkthrough",
+        "category": "Adobe Launch",
+        "icon": "$(book)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "adobeLaunch.goto",
+        "key": "ctrl+alt+l",
+        "mac": "cmd+alt+l",
+        "when": "adobeLaunch.state == ready"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "adobeLaunch.copyResourceId",
+          "when": "false"
+        },
+        {
+          "command": "adobeLaunch.revealInFinder",
+          "when": "false"
+        },
+        {
+          "command": "adobeLaunch.refreshTree",
+          "when": "false"
+        },
+        {
+          "command": "adobeLaunch.editComponentConfig",
+          "when": "false"
+        },
+        {
+          "command": "adobeLaunch.openRawJson",
+          "when": "false"
+        },
+        {
+          "command": "adobeLaunch.diffChange",
+          "when": "false"
+        },
+        {
+          "command": "adobeLaunch.revertChange",
+          "when": "false"
+        },
+        {
+          "command": "adobeLaunch.revertAllChanges",
+          "when": "false"
+        },
+        {
+          "command": "adobeLaunch.addTrigger",
+          "when": "false"
+        },
+        {
+          "command": "adobeLaunch.addCondition",
+          "when": "false"
+        },
+        {
+          "command": "adobeLaunch.addAction",
+          "when": "false"
+        },
+        {
+          "command": "adobeLaunch.signOut",
+          "when": "adobeLaunch.state != signedOut"
+        },
+        {
+          "command": "adobeLaunch.setProperty",
+          "when": "adobeLaunch.state != signedOut"
+        },
+        {
+          "command": "adobeLaunch.pull",
+          "when": "adobeLaunch.state != signedOut"
+        },
+        {
+          "command": "adobeLaunch.pullFresh",
+          "when": "adobeLaunch.state == ready"
+        },
+        {
+          "command": "adobeLaunch.setLibrary",
+          "when": "adobeLaunch.state == ready"
+        },
+        {
+          "command": "adobeLaunch.pushDryRun",
+          "when": "adobeLaunch.state == ready"
+        },
+        {
+          "command": "adobeLaunch.pushToLibrary",
+          "when": "adobeLaunch.state == ready"
+        },
+        {
+          "command": "adobeLaunch.buildLibrary",
+          "when": "adobeLaunch.state == ready"
+        },
+        {
+          "command": "adobeLaunch.selectAllChanges",
+          "when": "adobeLaunch.state == ready && adobeLaunch.hasChanges"
+        },
+        {
+          "command": "adobeLaunch.selectNoChanges",
+          "when": "adobeLaunch.state == ready && adobeLaunch.hasChanges"
+        },
+        {
+          "command": "adobeLaunch.goto",
+          "when": "adobeLaunch.state == ready"
+        },
+        {
+          "command": "adobeLaunch.search",
+          "when": "adobeLaunch.state == ready"
+        },
+        {
+          "command": "adobeLaunch.newRule",
+          "when": "adobeLaunch.state == ready"
+        },
+        {
+          "command": "adobeLaunch.addRuleComponent",
+          "when": "adobeLaunch.state == ready"
+        },
+        {
+          "command": "adobeLaunch.showStatus",
+          "when": "adobeLaunch.state == ready"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "adobeLaunch.refreshTree",
+          "when": "view == adobeLaunchChanges",
+          "group": "navigation@2"
+        },
+        {
+          "command": "adobeLaunch.pushToLibrary",
+          "when": "view == adobeLaunchChanges",
+          "group": "1_push@0"
+        },
+        {
+          "command": "adobeLaunch.pushDryRun",
+          "when": "view == adobeLaunchChanges",
+          "group": "1_push@1"
+        },
+        {
+          "command": "adobeLaunch.setLibrary",
+          "when": "view == adobeLaunchChanges",
+          "group": "1_push@2"
+        },
+        {
+          "command": "adobeLaunch.selectAllChanges",
+          "when": "view == adobeLaunchChanges && adobeLaunch.hasChanges",
+          "group": "2_select@1"
+        },
+        {
+          "command": "adobeLaunch.selectNoChanges",
+          "when": "view == adobeLaunchChanges && adobeLaunch.hasChanges",
+          "group": "2_select@2"
+        },
+        {
+          "command": "adobeLaunch.revertAllChanges",
+          "when": "view == adobeLaunchChanges && adobeLaunch.hasChanges",
+          "group": "9_danger@1"
+        },
+        {
+          "command": "adobeLaunch.goto",
+          "when": "view == adobeLaunchProperty && adobeLaunch.state == ready",
+          "group": "navigation@0"
+        },
+        {
+          "command": "adobeLaunch.newRule",
+          "when": "view == adobeLaunchProperty && adobeLaunch.state == ready",
+          "group": "navigation@1"
+        },
+        {
+          "command": "adobeLaunch.pull",
+          "when": "view == adobeLaunchProperty",
+          "group": "navigation@2"
+        },
+        {
+          "command": "adobeLaunch.setProperty",
+          "when": "view == adobeLaunchProperty",
+          "group": "navigation@3"
+        },
+        {
+          "command": "adobeLaunch.refreshTree",
+          "when": "view == adobeLaunchProperty",
+          "group": "navigation@4"
+        },
+        {
+          "command": "adobeLaunch.search",
+          "when": "view == adobeLaunchProperty && adobeLaunch.state == ready",
+          "group": "0_find@0"
+        },
+        {
+          "command": "adobeLaunch.pullFresh",
+          "when": "view == adobeLaunchProperty",
+          "group": "1_pull@1"
+        },
+        {
+          "command": "adobeLaunch.signOut",
+          "when": "view == adobeLaunchProperty",
+          "group": "9_account@1"
+        },
+        {
+          "command": "adobeLaunch.buildLibrary",
+          "when": "view == adobeLaunchLibrary",
+          "group": "navigation@0"
+        },
+        {
+          "command": "adobeLaunch.setLibrary",
+          "when": "view == adobeLaunchLibrary",
+          "group": "navigation@1"
+        },
+        {
+          "command": "adobeLaunch.refreshTree",
+          "when": "view == adobeLaunchLibrary",
+          "group": "navigation@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "adobeLaunch.copyResourceId",
+          "when": "view =~ /^adobeLaunch(Property|Library)$/ && viewItem =~ /^adobeLaunch\\.(resource|rule|libResource)(\\.local)?$/",
+          "group": "inline"
+        },
+        {
+          "command": "adobeLaunch.copyResourceId",
+          "when": "view =~ /^adobeLaunch(Property|Library)$/ && viewItem =~ /^adobeLaunch\\.(resource|rule|libResource)(\\.local)?$/",
+          "group": "1_actions@1"
+        },
+        {
+          "command": "adobeLaunch.addTrigger",
+          "when": "view == adobeLaunchProperty && viewItem == adobeLaunch.componentGroup.events",
+          "group": "inline"
+        },
+        {
+          "command": "adobeLaunch.addTrigger",
+          "when": "view == adobeLaunchProperty && viewItem == adobeLaunch.componentGroup.events",
+          "group": "1_actions@0"
+        },
+        {
+          "command": "adobeLaunch.addCondition",
+          "when": "view == adobeLaunchProperty && viewItem == adobeLaunch.componentGroup.conditions",
+          "group": "inline"
+        },
+        {
+          "command": "adobeLaunch.addCondition",
+          "when": "view == adobeLaunchProperty && viewItem == adobeLaunch.componentGroup.conditions",
+          "group": "1_actions@0"
+        },
+        {
+          "command": "adobeLaunch.addAction",
+          "when": "view == adobeLaunchProperty && viewItem == adobeLaunch.componentGroup.actions",
+          "group": "inline"
+        },
+        {
+          "command": "adobeLaunch.addAction",
+          "when": "view == adobeLaunchProperty && viewItem == adobeLaunch.componentGroup.actions",
+          "group": "1_actions@0"
+        },
+        {
+          "command": "adobeLaunch.addRuleComponent",
+          "when": "view == adobeLaunchProperty && viewItem == adobeLaunch.rule",
+          "group": "inline"
+        },
+        {
+          "command": "adobeLaunch.addRuleComponent",
+          "when": "view == adobeLaunchProperty && viewItem == adobeLaunch.rule",
+          "group": "1_actions@0"
+        },
+        {
+          "command": "adobeLaunch.diffChange",
+          "when": "view == adobeLaunchChanges && viewItem =~ /^adobeLaunch\\.(config|file)\\.changed$/",
+          "group": "inline"
+        },
+        {
+          "command": "adobeLaunch.diffChange",
+          "when": "view == adobeLaunchChanges && viewItem =~ /^adobeLaunch\\.(config|file)\\.changed$/",
+          "group": "1_actions@0"
+        },
+        {
+          "command": "adobeLaunch.revertChange",
+          "when": "view == adobeLaunchChanges && viewItem =~ /^adobeLaunch\\.(config|file)\\.changed$/",
+          "group": "9_danger@1"
+        },
+        {
+          "command": "adobeLaunch.editComponentConfig",
+          "when": "view =~ /^adobeLaunch(Changes|Property)$/ && viewItem =~ /^adobeLaunch\\.config(\\.changed)?$/",
+          "group": "inline"
+        },
+        {
+          "command": "adobeLaunch.editComponentConfig",
+          "when": "view =~ /^adobeLaunch(Changes|Property)$/ && viewItem =~ /^adobeLaunch\\.config(\\.changed)?$/",
+          "group": "1_actions@1"
+        },
+        {
+          "command": "adobeLaunch.openRawJson",
+          "when": "view =~ /^adobeLaunch(Changes|Property)$/ && viewItem =~ /^adobeLaunch\\.config(\\.changed)?$/",
+          "group": "1_actions@2"
+        },
+        {
+          "command": "adobeLaunch.revealInFinder",
+          "when": "view =~ /^adobeLaunch(Changes|Property)$/ && viewItem =~ /^adobeLaunch\\.(resource|rule|file|config)(\\.changed)?$/",
+          "group": "1_actions@3"
+        },
+        {
+          "command": "adobeLaunch.openRawJson",
+          "when": "view == adobeLaunchLibrary && viewItem == adobeLaunch.libResource.local",
+          "group": "1_actions@2"
+        },
+        {
+          "command": "adobeLaunch.revealInFinder",
+          "when": "view == adobeLaunchLibrary && viewItem == adobeLaunch.libResource.local",
+          "group": "1_actions@3"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "adobeLaunchProperty",
+        "when": "adobeLaunch.state == signedOut",
+        "contents": "Sign in with your Adobe IMS Server-to-Server credentials to get started.\n[Sign in to Adobe Launch](command:adobeLaunch.signIn)\nNew here? [Open the setup walkthrough](command:adobeLaunch.openWalkthrough)."
+      },
+      {
+        "view": "adobeLaunchProperty",
+        "when": "adobeLaunch.state == noProperty",
+        "contents": "You're signed in. Choose the Launch property to work on.\n[Set active property](command:adobeLaunch.setProperty)"
+      },
+      {
+        "view": "adobeLaunchProperty",
+        "when": "adobeLaunch.state == notPulled",
+        "contents": "This property hasn't been pulled yet. Create a local mirror to browse and edit it.\n[Pull property](command:adobeLaunch.pull)"
+      },
+      {
+        "view": "adobeLaunchChanges",
+        "when": "adobeLaunch.state == ready && !adobeLaunch.hasChanges",
+        "contents": "No unpushed changes — your local mirror matches Reactor.\nEdit a rule, data element, or extension and it'll show up here."
+      },
+      {
+        "view": "adobeLaunchLibrary",
+        "when": "adobeLaunch.state == ready && !adobeLaunch.hasLibrary",
+        "contents": "No active library selected. Pick one to see the rules and changes it contains.\n[Set active library](command:adobeLaunch.setLibrary)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "adobeLaunch",
+          "title": "Adobe Launch",
+          "icon": "media/launch.svg"
+        }
+      ]
+    },
+    "views": {
+      "adobeLaunch": [
+        {
+          "id": "adobeLaunchChanges",
+          "name": "Changes",
+          "icon": "$(cloud-upload)",
+          "when": "adobeLaunch.state == ready"
+        },
+        {
+          "id": "adobeLaunchProperty",
+          "name": "Property",
+          "icon": "$(cloud)"
+        },
+        {
+          "id": "adobeLaunchLibrary",
+          "name": "Library",
+          "icon": "$(library)",
+          "when": "adobeLaunch.state == ready"
+        }
+      ]
+    },
+    "walkthroughs": [
+      {
+        "id": "adobeLaunch.setup",
+        "title": "Get started with Adobe Launch",
+        "description": "Connect to Reactor, pick a property, and mirror it locally so you can edit rules as plain files.",
+        "steps": [
+          {
+            "id": "adobeLaunch.step.signIn",
+            "title": "Sign in to Adobe",
+            "description": "Add the IMS Server-to-Server credentials from your Adobe Developer Console project. They're stored in VS Code's Secret Storage, never in your workspace.\n[Sign in](command:adobeLaunch.signIn)",
+            "media": {
+              "markdown": "media/walkthrough/sign-in.md",
+              "altText": "Signing in to Adobe Launch"
+            },
+            "completionEvents": [
+              "onContext:adobeLaunch.state != signedOut"
+            ]
+          },
+          {
+            "id": "adobeLaunch.step.property",
+            "title": "Choose a property",
+            "description": "Pick which Launch property to work on. Everything else — rules, data elements, libraries — hangs off this choice.\n[Set active property](command:adobeLaunch.setProperty)",
+            "media": {
+              "markdown": "media/walkthrough/property.md",
+              "altText": "Choosing a Launch property"
+            },
+            "completionEvents": [
+              "onCommand:adobeLaunch.setProperty"
+            ]
+          },
+          {
+            "id": "adobeLaunch.step.pull",
+            "title": "Pull it locally",
+            "description": "Mirror the property to disk as JSON + JS files you can edit, search, and diff.\n[Pull property](command:adobeLaunch.pull)",
+            "media": {
+              "markdown": "media/walkthrough/pull.md",
+              "altText": "Pulling a property to a local mirror"
+            },
+            "completionEvents": [
+              "onContext:adobeLaunch.state == ready"
+            ]
+          },
+          {
+            "id": "adobeLaunch.step.push",
+            "title": "Edit, review, push",
+            "description": "Edits show up under Changes with a badge. Review each one against Reactor, then push into your active library.\n[Open the Adobe Launch view](command:adobeLaunchChanges.focus)",
+            "media": {
+              "markdown": "media/walkthrough/push.md",
+              "altText": "Reviewing and pushing changes"
+            }
+          }
+        ]
+      }
+    ],
+    "configuration": {
+      "title": "Adobe Launch",
+      "properties": {
+        "adobeLaunch.mirrorPath": {
+          "type": "string",
+          "default": "",
+          "description": "Directory holding local mirrors, one folder per property. Empty = <workspace>/launch_property"
+        },
+        "adobeLaunch.activePropertyId": {
+          "type": "string",
+          "default": "",
+          "description": "Default property id (e.g. PR8fb5f4098b86443b85d28c1ff98ba3f6) used by commands."
+        },
+        "adobeLaunch.activeLibraryId": {
+          "type": "string",
+          "default": "",
+          "description": "Active development library id (e.g. LB…) that 'Push to library' targets. Set via 'Adobe Launch: Set active library'."
+        },
+        "adobeLaunch.activeLibraryName": {
+          "type": "string",
+          "default": "",
+          "description": "Display name of the active library, cached for the sidebar. Managed automatically."
+        },
+        "adobeLaunch.scopes": {
+          "type": "string",
+          "default": "openid,AdobeID,read_organizations,additional_info.projectedProductContext,session,additional_info.job_function,additional_info.roles",
+          "description": "IMS OAuth scopes granted to the credential in Adobe Developer Console."
+        },
+        "adobeLaunch.platformMirrorPath": {
+          "type": "string",
+          "default": "",
+          "description": "Folder for the read-only AEP / CJA snapshot. Empty = <workspace>/adobe_platform."
+        },
+        "adobeLaunch.platformSandboxes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "AEP sandboxes to pull schemas and Data Prep mappings from (e.g. [\"prod\"]). Empty = every active sandbox."
+        },
+        "adobeLaunch.platformIncludeAdhocSchemas": {
+          "type": "boolean",
+          "default": false,
+          "description": "Also pull ad-hoc XDM schemas (generated by Query Service and temporary datasets). These can number in the thousands."
+        },
+        "adobeLaunch.pullConcurrency": {
+          "type": "number",
+          "default": 12,
+          "description": "Concurrent rule_component fetches during pull."
+        },
+        "adobeLaunch.requestTimeoutSeconds": {
+          "type": "number",
+          "default": 30,
+          "minimum": 1,
+          "markdownDescription": "How long to wait for a single Adobe request before giving up. Without a ceiling a stalled connection leaves a command spinning forever; raise this if Adobe is genuinely slow for you, lower it to fail faster behind a blocking proxy."
+        },
+        "adobeLaunch.validateDataElementRefs": {
+          "type": "boolean",
+          "default": true,
+          "description": "Warn when _satellite.getVar()/setVar() references a data element name that doesn't exist in the pulled property."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package --no-rewrite-relative-links --no-dependencies -o adobe-launch.vsix",
+    "test": "npm run compile && node test/push.conflicts.test.js && node test/push.subset.test.js && node test/library.revisions.test.js && node test/library.build.test.js && node test/delegates.customcode.test.js && node test/changes.pushrow.test.js && node test/baseline.locked.test.js && node test/client.retry.test.js && node test/client.timeout.test.js && node test/errors.test.js && node test/platform.pull.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.9.2",
+    "typescript": "^5.3.3"
+  }
+}
