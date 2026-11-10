@@ -2,7 +2,7 @@
 
 All notable changes to Launch Tags Editor for Adobe Experience Platform.
 
-## [Unreleased]
+## [0.13.1] — 2026-11-10
 
 ### Fixed
 
