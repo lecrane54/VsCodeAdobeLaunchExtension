@@ -2,7 +2,7 @@
   "name": "launch-tags-editor",
   "displayName": "Launch Tags Editor for Adobe Experience Platform",
   "description": "Pull, edit, and push Adobe Launch (Reactor) web and mobile properties as local JSON + JS files.",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "publisher": "lecrane",
   "icon": "media/icon.png",
   "galleryBanner": {

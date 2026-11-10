@@ -1,8 +1,8 @@
 # Changelog
 
-All notable changes to the Adobe Launch extension.
+All notable changes to Launch Tags Editor for Adobe Experience Platform.
 
-## [Unreleased]
+## [0.13.0] — 2026-11-10
 
 ### Added
 
