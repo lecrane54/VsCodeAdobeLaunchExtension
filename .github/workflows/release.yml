@@ -1,0 +1,52 @@
+name: Release
+
+# Push a version tag to publish a GitHub Release with the packaged extension:
+#   1. bump "version" in package.json (e.g. 0.13.0) and commit
+#   2. git tag v0.13.0 && git push origin v0.13.0
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write # create the release and upload the .vsix
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # A v0.13.0 tag on a package.json still saying 0.12.0 would publish a
+      # .vsix that installs as the wrong version. Stop before building it.
+      - name: Check tag matches package.json version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$pkg" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $pkg. Bump the version, commit, and re-tag."
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile and test
+        run: npm test
+
+      - name: Package extension
+        run: npx vsce package --no-rewrite-relative-links --no-dependencies -o "adobe-launch-${GITHUB_REF_NAME}.vsix"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" "adobe-launch-${GITHUB_REF_NAME}.vsix" \
+            --title "Adobe Launch $GITHUB_REF_NAME" \
+            --generate-notes \
+            --verify-tag
