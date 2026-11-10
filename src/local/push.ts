@@ -186,7 +186,7 @@ export async function applyChange(
     if (!ctx) throw new Error('created change requires push context');
     if (change.kind === 'rule') return applyCreateRule(client, change, ctx);
     if (change.kind === 'rule_component') return applyCreateComponent(client, change, ctx);
-    throw new Error(`Adobe Launch: creating a ${change.kind} is not supported.`);
+    throw new Error(`Launch Tags: creating a ${change.kind} is not supported.`);
   }
   if (change.kind === 'rule') {
     const attrs = loadLocalAttrs(change.jsonPath, null);
@@ -239,7 +239,7 @@ async function applyCreateRule(
     data: { type: 'rules', attributes: body },
   });
   const realId = resp?.data?.id;
-  if (!realId) throw new Error('Adobe Launch: rule create returned no id.');
+  if (!realId) throw new Error('Launch Tags: rule create returned no id.');
   const updatedAt = updatedAtOf(resp);
   reconcileCreatedRule(ctx, change, realId, updatedAt);
   return updatedAt;
@@ -303,10 +303,10 @@ async function applyCreateComponent(
   ctx: ApplyCtx
 ): Promise<string | undefined> {
   const parent = change.parentRuleId;
-  if (!parent) throw new Error('Adobe Launch: new component has no parent rule.');
+  if (!parent) throw new Error('Launch Tags: new component has no parent rule.');
   const realRuleId = ctx.ruleIdMap.get(parent) ?? parent;
   const extId = change.extensionId;
-  if (!extId) throw new Error('Adobe Launch: new component has no providing extension id.');
+  if (!extId) throw new Error('Launch Tags: new component has no providing extension id.');
 
   const attrs = loadLocalAttrs(change.jsonPath, change.jsPath);
   const body = pick(attrs, ['name', 'settings', 'order', 'negate', 'delegate_descriptor_id']);
@@ -318,7 +318,7 @@ async function applyCreateComponent(
     },
   });
   const realId = resp?.data?.id;
-  if (!realId) throw new Error('Adobe Launch: rule component create returned no id.');
+  if (!realId) throw new Error('Launch Tags: rule component create returned no id.');
   const updatedAt = updatedAtOf(resp);
 
   const parsed = JSON.parse(fs.readFileSync(change.jsonPath, 'utf-8'));

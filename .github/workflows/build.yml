@@ -38,7 +38,7 @@ jobs:
       - name: Upload .vsix
         uses: actions/upload-artifact@v4
         with:
-          name: adobe-launch-vsix
-          path: adobe-launch.vsix
+          name: launch-tags-editor-vsix
+          path: launch-tags-editor.vsix
           if-no-files-found: error
           retention-days: 30

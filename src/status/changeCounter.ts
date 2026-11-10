@@ -59,7 +59,7 @@ export class ChangeCounter {
     if (!pid) {
       this.set(
         '$(cloud) Launch: choose property',
-        'Adobe Launch — no property selected yet.\nClick to pick one.',
+        'Launch Tags — no property selected yet.\nClick to pick one.',
         'adobeLaunch.setProperty'
       );
       return;
@@ -71,7 +71,7 @@ export class ChangeCounter {
       // No folder open, so there's nowhere to mirror to.
       this.set(
         '$(cloud) Launch',
-        'Adobe Launch — open a folder to mirror a property into.',
+        'Launch Tags — open a folder to mirror a property into.',
         'adobeLaunch.openWalkthrough'
       );
       return;
@@ -79,7 +79,7 @@ export class ChangeCounter {
     if (!fs.existsSync(mirror)) {
       this.set(
         '$(cloud-download) Launch: pull property',
-        `Adobe Launch — ${pid} hasn't been pulled yet.\nClick to pull it.`,
+        `Launch Tags — ${pid} hasn't been pulled yet.\nClick to pull it.`,
         'adobeLaunch.pull'
       );
       return;
@@ -91,13 +91,13 @@ export class ChangeCounter {
     if (changes.length === 0) {
       this.set(
         '$(check) Launch: in sync',
-        `Adobe Launch — ${name} is in sync with Reactor.\n${pulled}\nClick to review changes in the sidebar.`,
+        `Launch Tags — ${name} is in sync with Reactor.\n${pulled}\nClick to review changes in the sidebar.`,
         'adobeLaunchChanges.focus'
       );
     } else {
       this.set(
         `$(cloud-upload) Launch: ${changes.length} unpushed`,
-        `Adobe Launch — ${changes.length} unpushed change(s) in ${name}.\n${pulled}\nClick to review them in the sidebar.`,
+        `Launch Tags — ${changes.length} unpushed change(s) in ${name}.\n${pulled}\nClick to review them in the sidebar.`,
         'adobeLaunchChanges.focus',
         true
       );

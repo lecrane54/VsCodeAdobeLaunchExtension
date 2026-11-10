@@ -59,7 +59,7 @@ export class SatelliteVarDiagnostics {
       const contentStart = m.index + m[0].indexOf(m[1]) + 1;
       const range = new vscode.Range(doc.positionAt(contentStart), doc.positionAt(contentStart + content.length));
       const d = new vscode.Diagnostic(range, `Unknown data element "${content}" — no data element with this name in the pulled property.`, vscode.DiagnosticSeverity.Warning);
-      d.source = 'Adobe Launch';
+      d.source = 'Launch Tags';
       diagnostics.push(d);
     }
     this.collection.set(doc.uri, diagnostics);

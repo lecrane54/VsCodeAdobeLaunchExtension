@@ -1,4 +1,4 @@
-# Adobe Launch for VS Code
+# Launch Tags Editor for Adobe Experience Platform
 
 Pull, edit, and push Adobe Launch (Reactor) properties as local JSON + JS files, directly from VS Code. No Python required.
 
@@ -13,17 +13,17 @@ Pull, edit, and push Adobe Launch (Reactor) properties as local JSON + JS files,
 
 ## Setup
 
-1. Install the `.vsix` (Extensions view → `…` menu → **Install from VSIX**).
-2. Command Palette → **Adobe Launch: Sign in to Adobe** — paste your Adobe IMS OAuth Server-to-Server Client ID and Secret. They're checked against Adobe before being saved, so a typo or a rotated secret is caught right there. Stored in VS Code's Secret Storage.
-3. Command Palette → **Adobe Launch: Set active property** — pick from the properties your credentials can see.
-4. Command Palette → **Adobe Launch: Pull property**.
+1. Install **Launch Tags Editor for Adobe Experience Platform** from the Extensions view (or `code --install-extension lecrane.launch-tags-editor`). Marketplace installs update automatically. Each release's `.vsix` is also attached to the [GitHub Releases](https://github.com/lecrane54/VsCodeAdobeLaunchExtension/releases) page.
+2. Command Palette → **Launch Tags: Sign in to Adobe** — paste your Adobe IMS OAuth Server-to-Server Client ID and Secret. They're checked against Adobe before being saved, so a typo or a rotated secret is caught right there. Stored in VS Code's Secret Storage.
+3. Command Palette → **Launch Tags: Set active property** — pick from the properties your credentials can see.
+4. Command Palette → **Launch Tags: Pull property**.
 
 Your Adobe credentials come from Adobe Developer Console → OAuth Server-to-Server. Each user should generate their own so Reactor's `updated_by_email` reflects the actual editor.
 
 If something fails, the notification says what went wrong and offers the fix —
 the common ones are a rotated secret, a project missing the Data Collection API,
 or a credential that isn't in a product profile with Launch access. Full API
-responses go to the **Adobe Launch** output channel.
+responses go to the **Launch Tags** output channel.
 
 ## Workflow
 
@@ -62,7 +62,7 @@ Pushed changes become *unrevised head* edits on their rules/data elements — vi
     npm install
     npm run compile      # type-check + build to out/
     npm test             # conflict, retry, and error-translation suites
-    npm run package      # build adobe-launch.vsix
+    npm run package      # build launch-tags-editor.vsix
 
 Reactor calls retry throttled (429) and transient responses automatically with
 exponential backoff, honoring `Retry-After`. Retries of non-idempotent calls

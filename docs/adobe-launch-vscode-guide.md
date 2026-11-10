@@ -1,6 +1,6 @@
-# Adobe Launch for VS Code — Install & User Guide
+# Launch Tags Editor for Adobe Experience Platform — Install & User Guide
 
-**Extension:** `lecrane.adobe-launch` · **Version:** 0.8.0 · **Requires:** VS Code 1.85 or newer
+**Extension:** `lecrane.launch-tags-editor` · **Requires:** VS Code 1.85 or newer
 
 This extension mirrors an Adobe Launch (Reactor) property onto disk as plain JSON + JavaScript
 files, lets you edit them with the full editor — search, diff, autocomplete — and pushes the
@@ -27,10 +27,14 @@ the credential, so a shared key makes every edit look like it came from the same
 
 ## 2. Install it in VS Code
 
-This extension is **not on the VS Code Marketplace**. You install it from the packaged
-`adobe-launch.vsix` file that ships in `vscode_extension/` — about 75 KB, 34 files, no bundled
-`node_modules` and no runtime dependencies to fetch. Searching the Extensions Marketplace for
-"Adobe Launch" will not find it.
+The simplest way is the **VS Code Marketplace**: open the Extensions view, search for
+**Launch Tags Editor**, and click **Install** — or run
+`code --install-extension lecrane.launch-tags-editor`. Marketplace installs update automatically.
+Cursor, VSCodium and other editors that use Open VSX can install it the same way from there.
+
+To install a specific version instead, download its `launch-tags-editor-v<version>.vsix` from the
+[GitHub Releases](https://github.com/lecrane54/VsCodeAdobeLaunchExtension/releases) page and use
+one of the methods below. A `.vsix` install does **not** update automatically.
 
 Everything below works the same in VS Code Insiders, Cursor, VSCodium, and Windsurf — each keeps its
 own extension list, so installing in one does **not** install it in the others.
@@ -42,19 +46,19 @@ own extension list, so installing in one does **not** install it in the others.
    or the squares icon in the Activity Bar.
 3. Click the **`…`** (Views and More Actions) button at the top-right of the Extensions panel.
 4. Choose **Install from VSIX…**.
-5. In the file dialog, select `vscode_extension/adobe-launch.vsix`.
-6. Wait for the "Completed installing Adobe Launch extension from VSIX" notification. If VS Code
+5. In the file dialog, select the downloaded `.vsix`.
+6. Wait for the "Completed installing Launch Tags Editor for Adobe Experience Platform extension from VSIX" notification. If VS Code
    offers **Reload Window** (or **Restart Extensions**), accept it.
 
 ### Method B — Drag and drop
 
-Open the Extensions view and drag `adobe-launch.vsix` from Finder/Explorer straight onto the
+Open the Extensions view and drag the `.vsix` from Finder/Explorer straight onto the
 extensions list. Same result as Method A, fewer clicks.
 
 ### Method C — Command line
 
 ```bash
-code --install-extension /path/to/vscode_extension/adobe-launch.vsix
+code --install-extension /path/to/launch-tags-editor-v<version>.vsix
 ```
 
 **The `code` command isn't on your PATH right now.** Two ways to fix that:
@@ -65,32 +69,31 @@ code --install-extension /path/to/vscode_extension/adobe-launch.vsix
 
   ```bash
   "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" \
-    --install-extension "$(pwd)/adobe-launch.vsix"
+    --install-extension "$(pwd)/launch-tags-editor-v<version>.vsix"
   ```
 
-Useful CLI companions: `code --list-extensions --show-versions | grep adobe` to confirm the version,
-and `code --uninstall-extension lecrane.adobe-launch` to remove it.
+Useful CLI companions: `code --list-extensions --show-versions | grep launch-tags` to confirm the version,
+and `code --uninstall-extension lecrane.launch-tags-editor` to remove it.
 
 ### Verify the install took
 
-- The Extensions view, filtered with `@installed adobe`, shows **Adobe Launch** with an
-  **lecrane** publisher and version **0.8.0**.
-- A rocket-ish **Adobe Launch** icon appears in the Activity Bar (left rail).
-- Command Palette → type `Adobe Launch` → you see the full command list (Sign in, Pull property, …).
-- View → Output → pick **Adobe Launch** from the dropdown → the channel ends with
-  `Adobe Launch extension activated.`
+- The Extensions view, filtered with `@installed launch tags`, shows **Launch Tags Editor for
+  Adobe Experience Platform** from the **lecrane** publisher.
+- A rocket-ish **Launch Tags** icon appears in the Activity Bar (left rail).
+- Command Palette → type `Launch Tags` → you see the full command list (Sign in, Pull property, …).
+- View → Output → pick **Launch Tags** from the dropdown → the channel ends with
+  `Launch Tags extension activated.`
 
 The extension activates on `onStartupFinished`, so it comes up on its own with every window — you
 don't need to open a Launch file to wake it.
 
-> On this machine it's already installed: `~/.vscode/extensions/lecrane.adobe-launch-0.8.0`.
 
 ### Where it lives on disk
 
 | OS | Path |
 | --- | --- |
-| macOS / Linux | `~/.vscode/extensions/lecrane.adobe-launch-<version>/` |
-| Windows | `%USERPROFILE%\.vscode\extensions\lecrane.adobe-launch-<version>\` |
+| macOS / Linux | `~/.vscode/extensions/lecrane.launch-tags-editor-<version>/` |
+| Windows | `%USERPROFILE%\.vscode\extensions\lecrane.launch-tags-editor-<version>\` |
 
 VS Code Insiders uses `~/.vscode-insiders/extensions/`; Cursor uses `~/.cursor/extensions/`.
 Deleting the folder by hand also uninstalls it, though the Extensions view is the cleaner route.
@@ -104,7 +107,7 @@ cached copy. Reload the window afterwards.
 
 ### Disable or uninstall
 
-Extensions view → **Adobe Launch** → gear icon:
+Extensions view → **Launch Tags** → gear icon:
 
 - **Disable** turns it off everywhere; **Disable (Workspace)** turns it off only for the current
   project — handy when a repo has nothing to do with Launch.
@@ -122,7 +125,7 @@ once per remote.
 
 ### Handing it to a teammate
 
-Send them the `adobe-launch.vsix` file itself — that's the whole distribution. They follow Method A,
+Point them at the Marketplace listing, or send them a `.vsix` from GitHub Releases — that's the whole distribution. They follow Method A,
 then sign in with **their own** Adobe credential (see §1). Nothing else needs to be shared, and no
 credential ever travels inside the VSIX.
 
@@ -132,7 +135,7 @@ credential ever travels inside the VSIX.
 cd vscode_extension
 npm install
 npm run compile        # tsc -p ./   → out/
-npm run package        # vsce package --no-dependencies -o adobe-launch.vsix
+npm run package        # vsce package --no-dependencies -o launch-tags-editor.vsix
 ```
 
 `npm run watch` recompiles on save. To debug the extension itself, open `vscode_extension/` in VS
@@ -147,24 +150,24 @@ way to test a change before packaging it.
 | "Unable to install extension … it is not compatible with VS Code 1.8x" | The extension requires **VS Code 1.85+**. Update VS Code (Code → Check for Updates), or lower `engines.vscode` in `package.json` and repackage |
 | `code: command not found` | The CLI shim isn't installed — see Method C above |
 | **Install from VSIX…** missing from the `…` menu | You're looking at the wrong `…` — it has to be the one in the Extensions panel header, not the window title bar |
-| Installed, but no Adobe Launch icon in the Activity Bar | Reload the window (Command Palette → **Developer: Reload Window**). If it's still missing, check the icon isn't hidden: right-click the Activity Bar and re-tick **Adobe Launch** |
-| Commands appear but every one errors immediately | Check View → Output → **Adobe Launch** and the Command Palette → **Developer: Toggle Developer Tools** console for the real error |
+| Installed, but no Launch Tags icon in the Activity Bar | Reload the window (Command Palette → **Developer: Reload Window**). If it's still missing, check the icon isn't hidden: right-click the Activity Bar and re-tick **Launch Tags** |
+| Commands appear but every one errors immediately | Check View → Output → **Launch Tags** and the Command Palette → **Developer: Toggle Developer Tools** console for the real error |
 | Installed in the wrong editor | Cursor/Insiders/VSCodium keep separate extension lists — install into each one you actually use |
 
 ---
 
 ## 3. First run
 
-The extension activates on startup and adds an **Adobe Launch** icon to the Activity Bar. Setup is
+The extension activates on startup and adds an **Launch Tags** icon to the Activity Bar. Setup is
 four steps; the sidebar walks you through them and each view shows the button for whichever step
-you're on. You can reopen the guided version any time with **Adobe Launch: Open setup walkthrough**.
+you're on. You can reopen the guided version any time with **Launch Tags: Open setup walkthrough**.
 
 **Open a folder first.** The mirror lives inside your workspace, so pull needs a workspace root
 unless you set an absolute `adobeLaunch.mirrorPath`.
 
 ### Step 1 — Sign in
 
-Command Palette → **Adobe Launch: Sign in (set credentials)**. Paste the Client ID and Client
+Command Palette → **Launch Tags: Sign in (set credentials)**. Paste the Client ID and Client
 Secret into the form. They go into VS Code **Secret Storage** (macOS Keychain / Windows Credential
 Manager) — never into your workspace or git.
 
@@ -172,11 +175,11 @@ Manager) — never into your workspace or git.
 `ADOBE_CLIENT_SECRET` (optionally `ADOBE_SCOPES`), the extension picks those up automatically and
 you can skip signing in. Secret Storage wins when both are present.
 
-**Adobe Launch: Sign out (clear credentials)** removes the stored pair. It does not touch `.env`.
+**Launch Tags: Sign out (clear credentials)** removes the stored pair. It does not touch `.env`.
 
 ### Step 2 — Choose a property
 
-**Adobe Launch: Set active property**. The picker lists every property your credential can see —
+**Launch Tags: Set active property**. The picker lists every property your credential can see —
 filter by name, platform, id, or domain. If your credential sees multiple companies, you pick the
 company first.
 
@@ -186,7 +189,7 @@ libraries belong to a property.
 
 ### Step 3 — Pull
 
-**Adobe Launch: Pull property**. This writes the mirror under
+**Launch Tags: Pull property**. This writes the mirror under
 `<workspace>/launch_property/<propertyId>/`:
 
 ```
@@ -262,7 +265,7 @@ tool, not just this extension.
 ### Pushing
 
 1. **Push (dry-run)** — lists exactly what would be sent, writes nothing. The detail lands in the
-   **Adobe Launch** output channel. Worth running the first few times.
+   **Launch Tags** output channel. Worth running the first few times.
 2. **Push** — confirms with a summary, then PATCHes each changed resource. Successful pushes update
    both the manifest hash and the baseline, so the change disappears from the Changes view.
 
@@ -368,7 +371,7 @@ Both read from the pulled mirror, so pull again after someone else adds data ele
 
 ## 7. Command reference
 
-All of these live under the **Adobe Launch:** prefix in the Command Palette.
+All of these live under the **Launch Tags:** prefix in the Command Palette.
 
 | Command | What it does |
 | --- | --- |
@@ -447,8 +450,8 @@ change; reformatting won't. If you edited outside `launch_property/`, click **Re
 Reactor error. Resources that succeeded are already reconciled; fix the failing one and push again.
 
 **Everything looks stale** — **Refresh** in a view title re-reads disk and re-fetches the library
-from Reactor. Detailed logs for every pull/push are in the **Adobe Launch** output channel
-(View → Output → *Adobe Launch*).
+from Reactor. Detailed logs for every pull/push are in the **Launch Tags** output channel
+(View → Output → *Launch Tags*).
 
 ---
 

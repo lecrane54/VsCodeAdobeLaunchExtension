@@ -1,4 +1,4 @@
-/** Adobe Launch extension entry point. */
+/** Launch Tags extension entry point. */
 
 import * as fs from 'fs';
 import * as vscode from 'vscode';
@@ -24,10 +24,10 @@ import { registerChangeDiff } from './diff/changeDiff';
 
 export function activate(context: vscode.ExtensionContext): void {
   const config = new Config(context);
-  const output = vscode.window.createOutputChannel('Adobe Launch');
+  const output = vscode.window.createOutputChannel('Launch Tags');
   context.subscriptions.push(output);
 
-  // Three views in the Adobe Launch activity-bar container.
+  // Three views in the Launch Tags activity-bar container.
   const selection = new ChangeSelection();
   const changesTree = new ChangesTreeProvider(config, selection);
   const propertyTree = new PropertyTreeProvider(config);
@@ -154,16 +154,16 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand('adobeLaunch.copyResourceId', async (node?: { resourceId?: string }) => {
       const id = node?.resourceId;
       if (!id) {
-        vscode.window.showWarningMessage('Adobe Launch: no resource id for that item.');
+        vscode.window.showWarningMessage('Launch Tags: no resource id for that item.');
         return;
       }
       await vscode.env.clipboard.writeText(id);
-      vscode.window.showInformationMessage(`Adobe Launch: copied ${id}`);
+      vscode.window.showInformationMessage(`Launch Tags: copied ${id}`);
     }),
     vscode.commands.registerCommand('adobeLaunch.revealInFinder', async (node?: { resourceUri?: vscode.Uri; path?: string }) => {
       const uri = node?.resourceUri ?? (node?.path ? vscode.Uri.file(node.path) : undefined);
       if (!uri) {
-        vscode.window.showWarningMessage('Adobe Launch: nothing to reveal for that item.');
+        vscode.window.showWarningMessage('Launch Tags: nothing to reveal for that item.');
         return;
       }
       await vscode.commands.executeCommand('revealFileInOS', uri);
@@ -281,7 +281,7 @@ export function activate(context: vscode.ExtensionContext): void {
   updateBadge();
   updateViewTitles();
   void syncContext();
-  output.appendLine('Adobe Launch extension activated.');
+  output.appendLine('Launch Tags extension activated.');
 }
 
 export function deactivate(): void {

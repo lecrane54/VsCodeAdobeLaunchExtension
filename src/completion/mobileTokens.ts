@@ -99,7 +99,7 @@ export class MobileTokenDiagnostics {
         issue.message,
         vscode.DiagnosticSeverity.Warning
       );
-      d.source = 'Adobe Launch';
+      d.source = 'Launch Tags';
       return d;
     });
     this.collection.set(doc.uri, diagnostics);

@@ -9,7 +9,7 @@ import { errorText, explainError } from '../reactor/errors';
 export function showSignInPanel(context: vscode.ExtensionContext, config: Config, refresh: () => void): void {
   const panel = vscode.window.createWebviewPanel(
     'adobeLaunchSignIn',
-    'Adobe Launch: Sign in',
+    'Launch Tags: Sign in',
     vscode.ViewColumn.Active,
     {
       enableScripts: true,
@@ -44,7 +44,7 @@ export function showSignInPanel(context: vscode.ExtensionContext, config: Config
       try {
         await config.storeCredentials(clientId, clientSecret);
         panel.webview.postMessage({ type: 'success' });
-        vscode.window.showInformationMessage('Adobe Launch: credentials verified and saved.');
+        vscode.window.showInformationMessage('Launch Tags: credentials verified and saved.');
         refresh();
         setTimeout(() => panel.dispose(), 900);
       } catch (err) {
@@ -73,7 +73,7 @@ function renderHtml(webview: vscode.Webview): string {
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="Content-Security-Policy" content="${csp}" />
-  <title>Adobe Launch: Sign in</title>
+  <title>Launch Tags: Sign in</title>
   <style>
     body {
       font-family: var(--vscode-font-family);
@@ -168,7 +168,7 @@ function renderHtml(webview: vscode.Webview): string {
   </style>
 </head>
 <body>
-  <h1>Sign in to Adobe Launch</h1>
+  <h1>Sign in to Adobe</h1>
   <p class="help">
     Paste your Adobe IMS OAuth Server-to-Server credentials.
     Get them from <span>developer.adobe.com/console</span> → your project → <em>OAuth Server-to-Server</em> credential.

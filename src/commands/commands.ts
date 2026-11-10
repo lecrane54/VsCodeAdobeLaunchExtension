@@ -124,7 +124,7 @@ async function ensureClient(
   const client = await createClient(config, logChannel && ((m) => logChannel.appendLine(m)));
   if (!client) {
     const choice = await vscode.window.showWarningMessage(
-      'Adobe Launch: no credentials found.',
+      'Launch Tags: no credentials found.',
       'Sign in now'
     );
     if (choice === 'Sign in now') {
@@ -148,14 +148,14 @@ async function resolveOrgId(client: ReactorClient): Promise<string | undefined> 
   }
   if (orgs.size === 0) {
     vscode.window.showErrorMessage(
-      'Adobe Launch: no Adobe org visible with these credentials. Check your product profile in Adobe Developer Console.'
+      'Launch Tags: no Adobe org visible with these credentials. Check your product profile in Adobe Developer Console.'
     );
     return undefined;
   }
   if (orgs.size === 1) return [...orgs.keys()][0];
   const pick = await vscode.window.showQuickPick(
     [...orgs].map(([id, name]) => ({ label: name, description: id, id })),
-    { title: 'Adobe Launch: pull Platform config from which org?', matchOnDescription: true }
+    { title: 'Launch Tags: pull Platform config from which org?', matchOnDescription: true }
   );
   return pick?.id;
 }
@@ -169,7 +169,7 @@ interface PropertyChoice {
 /** Fetch companies + properties from Reactor and show a QuickPick. Returns the pick or undefined. */
 async function pickProperty(
   client: ReactorClient,
-  title = 'Adobe Launch: pick a property',
+  title = 'Launch Tags: pick a property',
   activeId = ''
 ): Promise<PropertyChoice | undefined> {
   return await vscode.window.withProgress(
@@ -179,12 +179,12 @@ async function pickProperty(
       try {
         companies = await client.paged<any>('/companies');
       } catch (err) {
-        await showError('Adobe Launch: could not list companies', err);
+        await showError('Launch Tags: could not list companies', err);
         return undefined;
       }
       if (companies.length === 0) {
         vscode.window.showErrorMessage(
-          'Adobe Launch: no companies visible with these credentials. Check your product profile in Adobe Developer Console.'
+          'Launch Tags: no companies visible with these credentials. Check your product profile in Adobe Developer Console.'
         );
         return undefined;
       }
@@ -198,7 +198,7 @@ async function pickProperty(
             description: c.id,
             id: c.id,
           })),
-          { title: 'Adobe Launch: pick a company', matchOnDescription: true }
+          { title: 'Launch Tags: pick a company', matchOnDescription: true }
         );
         if (!co) return undefined;
         companyId = co.id;
@@ -207,11 +207,11 @@ async function pickProperty(
       try {
         properties = await client.paged<any>(`/companies/${companyId}/properties`);
       } catch (err) {
-        await showError('Adobe Launch: could not list properties', err);
+        await showError('Launch Tags: could not list properties', err);
         return undefined;
       }
       if (properties.length === 0) {
-        vscode.window.showErrorMessage('Adobe Launch: no properties in that company.');
+        vscode.window.showErrorMessage('Launch Tags: no properties in that company.');
         return undefined;
       }
       const items = properties
@@ -262,7 +262,7 @@ async function pickLibrary(
       () => listLibraries(client, propertyId, 'development')
     );
   } catch (err) {
-    await showError('Adobe Launch: could not list libraries', err);
+    await showError('Launch Tags: could not list libraries', err);
     return undefined;
   }
   interface Item extends vscode.QuickPickItem {
@@ -292,7 +292,7 @@ async function pickLibrary(
   if (!picked) return undefined;
   if (picked.createNew) {
     const name = await vscode.window.showInputBox({
-      title: 'Adobe Launch: new library name',
+      title: 'Launch Tags: new library name',
       prompt: 'e.g. "MCP Test" or "Kyle — Rule Optimization"',
       validateInput: (v) => (v.trim().length > 0 ? undefined : 'Name is required.'),
     });
@@ -303,7 +303,7 @@ async function pickLibrary(
         () => createLibrary(client, propertyId, name.trim())
       );
     } catch (err) {
-      await showError('Adobe Launch: could not create the library', err);
+      await showError('Launch Tags: could not create the library', err);
       return undefined;
     }
   }
@@ -416,7 +416,7 @@ async function addComponent(
   if (!pid) { await vscode.commands.executeCommand('adobeLaunch.setProperty'); return; }
   const mirror = path.join(config.mirrorRoot(), pid);
   if (!fs.existsSync(mirror)) {
-    vscode.window.showInformationMessage('Adobe Launch: not pulled yet — pull the property first.');
+    vscode.window.showInformationMessage('Launch Tags: not pulled yet — pull the property first.');
     return;
   }
 
@@ -474,13 +474,13 @@ async function addComponent(
       isCustomCode: isCustomCodeDelegate(delegate.delegateId),
     });
   } catch (err) {
-    vscode.window.showErrorMessage(`Adobe Launch: could not add component: ${(err as Error).message}`);
+    vscode.window.showErrorMessage(`Launch Tags: could not add component: ${(err as Error).message}`);
     return;
   }
 
   refresh();
   vscode.window.showInformationMessage(
-    `Adobe Launch: added ${label} "${name.trim()}" to "${rule.name}" (unpushed).`
+    `Launch Tags: added ${label} "${name.trim()}" to "${rule.name}" (unpushed).`
   );
 
   // Custom code opens the .js sidecar; config opens the settings form.
@@ -507,7 +507,7 @@ export function registerCommands(
     vscode.commands.registerCommand('adobeLaunch.editComponentConfig', async (arg?: unknown) => {
       const jsonPath = resolveComponentPath(arg);
       if (!jsonPath) {
-        vscode.window.showWarningMessage('Adobe Launch: no component config for that item.');
+        vscode.window.showWarningMessage('Launch Tags: no component config for that item.');
         return;
       }
       showComponentForm(context, jsonPath, refresh);
@@ -520,33 +520,33 @@ export function registerCommands(
 
     vscode.commands.registerCommand('adobeLaunch.signOut', async () => {
       await config.clearCredentials();
-      vscode.window.showInformationMessage('Adobe Launch: credentials cleared.');
+      vscode.window.showInformationMessage('Launch Tags: credentials cleared.');
       refresh();
     }),
 
     vscode.commands.registerCommand('adobeLaunch.setProperty', async () => {
       const client = await ensureClient(config, logChannel); if (!client) return;
-      const choice = await pickProperty(client, 'Adobe Launch: set active property', config.activePropertyId());
+      const choice = await pickProperty(client, 'Launch Tags: set active property', config.activePropertyId());
       if (!choice) return;
       await config.setActivePropertyId(choice.id);
-      vscode.window.showInformationMessage(`Adobe Launch: active property = ${choice.name}`);
+      vscode.window.showInformationMessage(`Launch Tags: active property = ${choice.name}`);
       refresh();
     }),
 
     vscode.commands.registerCommand('adobeLaunch.setLibrary', async () => {
       const client = await ensureClient(config, logChannel); if (!client) return;
-      const pid = await resolvePropertyId(config, client, { title: 'Adobe Launch: pick a property first' });
+      const pid = await resolvePropertyId(config, client, { title: 'Launch Tags: pick a property first' });
       if (!pid) return;
-      const lib = await pickLibrary(client, pid, 'Adobe Launch: set active library');
+      const lib = await pickLibrary(client, pid, 'Launch Tags: set active library');
       if (!lib) return;
       await config.setActiveLibrary(lib.id, lib.name);
-      vscode.window.showInformationMessage(`Adobe Launch: active library = ${lib.name}`);
+      vscode.window.showInformationMessage(`Launch Tags: active library = ${lib.name}`);
       refresh();
     }),
 
     vscode.commands.registerCommand('adobeLaunch.pull', async () => {
       const client = await ensureClient(config, logChannel); if (!client) return;
-      const pid = await resolvePropertyId(config, client, { forcePick: true, title: 'Adobe Launch: pull which property?' });
+      const pid = await resolvePropertyId(config, client, { forcePick: true, title: 'Launch Tags: pull which property?' });
       if (!pid) return;
       await vscode.window.withProgress(
         { location: vscode.ProgressLocation.Notification, title: `Pulling ${pid}…`, cancellable: false },
@@ -556,10 +556,10 @@ export function registerCommands(
               concurrency: config.pullConcurrency(),
               progress: makeProgress(logChannel, progress),
             });
-            vscode.window.showInformationMessage(`Adobe Launch: pulled ${pid}`);
+            vscode.window.showInformationMessage(`Launch Tags: pulled ${pid}`);
             refresh();
           } catch (err) {
-            await showError('Adobe Launch pull failed', err);
+            await showError('Launch Tags pull failed', err);
           }
         }
       );
@@ -597,19 +597,19 @@ export function registerCommands(
             logChannel.appendLine(`Platform pull → ${result.root}`);
             if (!failed.length) {
               vscode.window.showInformationMessage(
-                `Adobe Launch: pulled ${pulled.length} sections to ${path.basename(result.root)}/.`
+                `Launch Tags: pulled ${pulled.length} sections to ${path.basename(result.root)}/.`
               );
               return;
             }
             for (const f of failed) logChannel.appendLine(`  ${f.name}: ${(f.error as Error)?.message}`);
             // Explain the first failure; the rest are usually the same cause.
             await showError(
-              `Adobe Launch: ${failed.length} of ${result.sections.length} sections failed ` +
+              `Launch Tags: ${failed.length} of ${result.sections.length} sections failed ` +
                 `(${failed.map((f) => f.name).join(', ')})`,
               failed[0].error
             );
           } catch (err) {
-            await showError('Adobe Launch Platform pull failed', err);
+            await showError('Launch Tags Platform pull failed', err);
           }
         }
       );
@@ -617,7 +617,7 @@ export function registerCommands(
 
     vscode.commands.registerCommand('adobeLaunch.pullFresh', async () => {
       const client = await ensureClient(config, logChannel); if (!client) return;
-      const pid = await resolvePropertyId(config, client, { forcePick: true, title: 'Adobe Launch: fresh-pull which property?' });
+      const pid = await resolvePropertyId(config, client, { forcePick: true, title: 'Launch Tags: fresh-pull which property?' });
       if (!pid) return;
       // Name the property and count what's about to be destroyed — "wipe
       // PR8fb5f409…" tells the user neither which property nor what they lose.
@@ -653,10 +653,10 @@ export function registerCommands(
               fresh: true,
               progress: makeProgress(logChannel, progress),
             });
-            vscode.window.showInformationMessage(`Adobe Launch: fresh-pulled ${pid}`);
+            vscode.window.showInformationMessage(`Launch Tags: fresh-pulled ${pid}`);
             refresh();
           } catch (err) {
-            await showError('Adobe Launch pull failed', err);
+            await showError('Launch Tags pull failed', err);
           }
         }
       );
@@ -688,7 +688,7 @@ export function registerCommands(
               only,
             });
             if (result.changes.length === 0) {
-              vscode.window.showInformationMessage('Adobe Launch: no local changes.');
+              vscode.window.showInformationMessage('Launch Tags: no local changes.');
             } else {
               logChannel.show(true);
               const drift = result.conflicts.length
@@ -698,13 +698,13 @@ export function registerCommands(
                 ? vscode.window.showWarningMessage
                 : vscode.window.showInformationMessage;
               show(
-                `Adobe Launch: ${result.changes.length} change(s) would be pushed.${drift}` +
-                  ' See "Adobe Launch" output for details.'
+                `Launch Tags: ${result.changes.length} change(s) would be pushed.${drift}` +
+                  ' See "Launch Tags" output for details.'
               );
             }
             refresh();
           } catch (err) {
-            await showError('Adobe Launch dry-run failed', err);
+            await showError('Launch Tags dry-run failed', err);
           }
         }
       );
@@ -726,20 +726,20 @@ export function registerCommands(
       if (!pid) return;
       const mirror = path.join(config.mirrorRoot(), pid);
       if (!fs.existsSync(mirror)) {
-        vscode.window.showErrorMessage(`Adobe Launch: no local mirror at ${mirror}. Pull first.`);
+        vscode.window.showErrorMessage(`Launch Tags: no local mirror at ${mirror}. Pull first.`);
         return;
       }
       const manifest = Manifest.load(mirror);
       const all = detectChanges(mirror, manifest);
       if (all.length === 0) {
-        vscode.window.showInformationMessage('Adobe Launch: no local changes to push.');
+        vscode.window.showInformationMessage('Launch Tags: no local changes to push.');
         return;
       }
       selection.prune(all);
       const ticked = selection.filter(all);
       if (ticked.length === 0) {
         vscode.window.showInformationMessage(
-          'Adobe Launch: nothing ticked in the Changes view — tick at least one change to push.'
+          'Launch Tags: nothing ticked in the Changes view — tick at least one change to push.'
         );
         return;
       }
@@ -757,7 +757,7 @@ export function registerCommands(
       const activeId = config.activeLibraryId();
       if (!activeId) {
         const pick = await vscode.window.showWarningMessage(
-          'Adobe Launch: no active library. Set one before pushing.',
+          'Launch Tags: no active library. Set one before pushing.',
           'Set active library'
         );
         if (pick === 'Set active library') {
@@ -803,12 +803,12 @@ export function registerCommands(
             });
             if (pushResult.cancelled) {
               vscode.window.showWarningMessage(
-                `Adobe Launch: push cancelled — ${pushResult.conflicts.length} resource(s) changed in Reactor. Nothing was pushed or added to "${lib.name}".`
+                `Launch Tags: push cancelled — ${pushResult.conflicts.length} resource(s) changed in Reactor. Nothing was pushed or added to "${lib.name}".`
               );
               return;
             }
             if (pushResult.applied === 0) {
-              vscode.window.showWarningMessage('Adobe Launch: nothing applied — aborting library add.');
+              vscode.window.showWarningMessage('Launch Tags: nothing applied — aborting library add.');
               return;
             }
 
@@ -823,7 +823,7 @@ export function registerCommands(
               else if (c.kind === 'extension') refs.push({ originId: c.resourceId, type: 'extensions' });
             }
             if (refs.length === 0) {
-              vscode.window.showInformationMessage('Adobe Launch: pushed but no resources needed library add.');
+              vscode.window.showInformationMessage('Launch Tags: pushed but no resources needed library add.');
               refresh();
               return;
             }
@@ -845,17 +845,17 @@ export function registerCommands(
             );
 
             const build = await vscode.window.showInformationMessage(
-              `Adobe Launch: pushed ${pushResult.applied}, added ${addedCount} to "${lib.name}".`,
+              `Launch Tags: pushed ${pushResult.applied}, added ${addedCount} to "${lib.name}".`,
               'Build library now',
               'Later'
             );
             if (build === 'Build library now') {
               await buildLibrary(client, lib.id);
-              vscode.window.showInformationMessage(`Adobe Launch: build triggered for "${lib.name}".`);
+              vscode.window.showInformationMessage(`Launch Tags: build triggered for "${lib.name}".`);
             }
             refresh();
           } catch (err) {
-            await showError('Adobe Launch push-to-library failed', err);
+            await showError('Launch Tags push-to-library failed', err);
           }
         }
       );
@@ -872,7 +872,7 @@ export function registerCommands(
       const libId = config.activeLibraryId();
       if (!libId) {
         const pick = await vscode.window.showWarningMessage(
-          'Adobe Launch: no active library to build.',
+          'Launch Tags: no active library to build.',
           'Set active library'
         );
         if (pick === 'Set active library') {
@@ -903,26 +903,26 @@ export function registerCommands(
             const final = await waitForBuild(client, build, p, token);
             refresh();
             if (final.status === 'succeeded') {
-              vscode.window.showInformationMessage(`Adobe Launch: "${name}" built successfully.`);
+              vscode.window.showInformationMessage(`Launch Tags: "${name}" built successfully.`);
             } else if (final.status === 'failed') {
               const pick = await vscode.window.showErrorMessage(
-                `Adobe Launch: build of "${name}" failed. Reactor usually explains why on the build in the Launch UI.`,
+                `Launch Tags: build of "${name}" failed. Reactor usually explains why on the build in the Launch UI.`,
                 'Show details'
               );
               if (pick === 'Show details') logChannel.show(true);
             } else if (token.isCancellationRequested) {
               vscode.window.showInformationMessage(
-                `Adobe Launch: stopped watching the build of "${name}" — it is still running on Reactor.`
+                `Launch Tags: stopped watching the build of "${name}" — it is still running on Reactor.`
               );
             } else {
               // Either the poll timed out or the response wasn't the shape we
               // expected. Say what we actually know rather than claim success.
               vscode.window.showWarningMessage(
-                `Adobe Launch: build of "${name}" triggered; final status unknown (last seen: ${final.status ?? 'unknown'}).`
+                `Launch Tags: build of "${name}" triggered; final status unknown (last seen: ${final.status ?? 'unknown'}).`
               );
             }
           } catch (err) {
-            await showError('Adobe Launch build failed', err);
+            await showError('Launch Tags build failed', err);
           }
         }
       );
@@ -953,16 +953,16 @@ export function registerCommands(
       }
       const mirror = path.join(config.mirrorRoot(), pid);
       if (!fs.existsSync(mirror)) {
-        vscode.window.showInformationMessage('Adobe Launch: not pulled yet.');
+        vscode.window.showInformationMessage('Launch Tags: not pulled yet.');
         return;
       }
       const items = collectResources(mirror);
       if (items.length === 0) {
-        vscode.window.showInformationMessage('Adobe Launch: nothing to open — pull the property first.');
+        vscode.window.showInformationMessage('Launch Tags: nothing to open — pull the property first.');
         return;
       }
       const picked = await vscode.window.showQuickPick(items, {
-        title: 'Adobe Launch: go to resource',
+        title: 'Launch Tags: go to resource',
         matchOnDescription: true,
         placeHolder: 'Search rules, data elements, and extensions by name…',
       });
@@ -979,13 +979,13 @@ export function registerCommands(
       }
       const mirror = path.join(config.mirrorRoot(), pid);
       if (!fs.existsSync(mirror)) {
-        vscode.window.showInformationMessage('Adobe Launch: not pulled yet.');
+        vscode.window.showInformationMessage('Launch Tags: not pulled yet.');
         return;
       }
       const manifest = Manifest.load(mirror);
       const changes = detectChanges(mirror, manifest);
       if (changes.length === 0) {
-        vscode.window.showInformationMessage('Adobe Launch: in sync — no local changes.');
+        vscode.window.showInformationMessage('Launch Tags: in sync — no local changes.');
         return;
       }
       const picked = await vscode.window.showQuickPick(
@@ -1043,11 +1043,11 @@ export function registerCommands(
       if (!pid) { await vscode.commands.executeCommand('adobeLaunch.setProperty'); return; }
       const mirror = path.join(config.mirrorRoot(), pid);
       if (!fs.existsSync(mirror)) {
-        vscode.window.showInformationMessage('Adobe Launch: not pulled yet — pull the property first.');
+        vscode.window.showInformationMessage('Launch Tags: not pulled yet — pull the property first.');
         return;
       }
       const name = await vscode.window.showInputBox({
-        title: 'Adobe Launch: new rule name',
+        title: 'Launch Tags: new rule name',
         prompt: 'A development-state rule is created locally and pushed later.',
         validateInput: (v) => (v.trim().length ? undefined : 'Name is required.'),
       });
@@ -1058,13 +1058,13 @@ export function registerCommands(
       try {
         created = createRuleLocal(mirror, manifest, name.trim());
       } catch (err) {
-        vscode.window.showErrorMessage(`Adobe Launch: could not create rule: ${(err as Error).message}`);
+        vscode.window.showErrorMessage(`Launch Tags: could not create rule: ${(err as Error).message}`);
         return;
       }
       refresh();
 
       const next = await vscode.window.showInformationMessage(
-        `Adobe Launch: created rule "${name.trim()}" (unpushed).`,
+        `Launch Tags: created rule "${name.trim()}" (unpushed).`,
         'Add trigger/condition/action',
         'Open rule.json'
       );
@@ -1082,18 +1082,18 @@ export function registerCommands(
       if (!pid) { await vscode.commands.executeCommand('adobeLaunch.setProperty'); return; }
       const mirror = path.join(config.mirrorRoot(), pid);
       if (!fs.existsSync(mirror)) {
-        vscode.window.showInformationMessage('Adobe Launch: not pulled yet — pull the property first.');
+        vscode.window.showInformationMessage('Launch Tags: not pulled yet — pull the property first.');
         return;
       }
       const query = await vscode.window.showInputBox({
-        title: 'Adobe Launch: search rules & code',
+        title: 'Launch Tags: search rules & code',
         prompt: 'Text to find in names, settings, and custom code. Filters: kind:events|conditions|actions, delegate:<substr>',
         placeHolder: 'e.g.  checkout   ·   kind:events click   ·   delegate:custom-code',
       });
       if (query === undefined) return;
       const results = searchMirror(mirror, query);
       if (results.length === 0) {
-        vscode.window.showInformationMessage('Adobe Launch: no matches.');
+        vscode.window.showInformationMessage('Launch Tags: no matches.');
         return;
       }
       const picked = await vscode.window.showQuickPick(results, {
@@ -1245,7 +1245,7 @@ async function resolveTargetRule(mirror: string, arg: unknown): Promise<TargetRu
       })
     : [];
   if (entries.length === 0) {
-    vscode.window.showInformationMessage('Adobe Launch: no rules yet — create one with "New rule…".');
+    vscode.window.showInformationMessage('Launch Tags: no rules yet — create one with "New rule…".');
     return undefined;
   }
   interface Item extends vscode.QuickPickItem { rule: TargetRule; }
@@ -1343,17 +1343,17 @@ async function copyEnvironmentId(config: Config, logChannel: vscode.OutputChanne
       }
     );
   } catch (err) {
-    await showError('Adobe Launch: could not list environments', err);
+    await showError('Launch Tags: could not list environments', err);
     return;
   }
   if (platform === 'edge') {
     vscode.window.showInformationMessage(
-      'Adobe Launch: edge properties run on the Edge Network — there is no App ID or embed code to copy.'
+      'Launch Tags: edge properties run on the Edge Network — there is no App ID or embed code to copy.'
     );
     return;
   }
   if (envs.length === 0) {
-    vscode.window.showInformationMessage('Adobe Launch: this property has no environments yet.');
+    vscode.window.showInformationMessage('Launch Tags: this property has no environments yet.');
     return;
   }
 
@@ -1373,7 +1373,7 @@ async function copyEnvironmentId(config: Config, logChannel: vscode.OutputChanne
   const fileId = envPick.env.fileId;
   if (!fileId) {
     vscode.window.showErrorMessage(
-      `Adobe Launch: "${envPick.label}" has no library path yet. Assign it a host in the Launch UI, then try again.`
+      `Launch Tags: "${envPick.label}" has no library path yet. Assign it a host in the Launch UI, then try again.`
     );
     return;
   }
@@ -1385,7 +1385,7 @@ async function copyEnvironmentId(config: Config, logChannel: vscode.OutputChanne
   );
   if (!fmt) return;
   await vscode.env.clipboard.writeText(fmt.text);
-  vscode.window.showInformationMessage(`Adobe Launch: copied ${fmt.label} for ${envPick.label}.`);
+  vscode.window.showInformationMessage(`Launch Tags: copied ${fmt.label} for ${envPick.label}.`);
 }
 
 interface SearchItem extends vscode.QuickPickItem {

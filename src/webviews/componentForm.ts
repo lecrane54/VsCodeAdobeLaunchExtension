@@ -54,7 +54,7 @@ export function showComponentForm(
     parsed = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
   }
   catch (err) {
-    vscode.window.showErrorMessage(`Adobe Launch: could not read ${path.basename(jsonPath)}: ${(err as Error).message}`);
+    vscode.window.showErrorMessage(`Launch Tags: could not read ${path.basename(jsonPath)}: ${(err as Error).message}`);
     return;
   }
   const attrs = parsed?.attributes ?? {};
@@ -91,7 +91,7 @@ export function showComponentForm(
         current.attributes.settings = newSettings;
         fs.writeFileSync(jsonPath, canonicalJson(current), 'utf-8');
         panel.webview.postMessage({ type: 'success' });
-        vscode.window.showInformationMessage(`Adobe Launch: saved config for "${componentName}".`);
+        vscode.window.showInformationMessage(`Launch Tags: saved config for "${componentName}".`);
         onSaved();
         setTimeout(() => panel.dispose(), 600);
       }

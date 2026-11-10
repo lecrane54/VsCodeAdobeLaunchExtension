@@ -18,7 +18,7 @@ All notable changes to the Adobe Launch extension.
     after `{%%`, and a warning flags a token naming no data element, or a
     web-style `%name%` that won't resolve on mobile. Controlled by
     `adobeLaunch.validateDataElementRefs`, like the `_satellite` checks.
-  - New command **Adobe Launch: Copy App ID / embed code…** reads the
+  - New command **Launch Tags: Copy App ID / embed code…** reads the
     property's environments and copies the mobile App ID, a ready-to-paste
     `MobileCore.configureWith(appId:)` line for Swift or Kotlin, or, for a
     web property, its embed code.
@@ -38,6 +38,16 @@ All notable changes to the Adobe Launch extension.
   org re-pulls byte-identical and diffs show only real changes. Datastream
   configs aren't included: Adobe doesn't open that API to server-to-server
   credentials.
+
+### Changed
+
+- **Renamed to Launch Tags Editor for Adobe Experience Platform**, published as
+  `lecrane.launch-tags-editor` on the VS Code Marketplace and Open VSX, so
+  installs update automatically. Commands, the sidebar, settings section and
+  output channel now say **Launch Tags**. Settings keep their `adobeLaunch.*`
+  keys, so existing settings carry over. Because the extension id changed,
+  uninstall the old `.vsix` build and sign in once more after installing.
+- MIT licensed.
 
 ### Fixed
 

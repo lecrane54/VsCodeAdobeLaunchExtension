@@ -51,7 +51,7 @@ jobs:
       # Relative README links are rewritten to GitHub URLs (from `repository`
       # in package.json) so they work on the Marketplace page.
       - name: Package extension
-        run: npx vsce package --no-dependencies -o "adobe-launch-${GITHUB_REF_NAME}.vsix"
+        run: npx vsce package --no-dependencies -o "launch-tags-editor-${GITHUB_REF_NAME}.vsix"
 
       - name: Publish to VS Code Marketplace
         env:
@@ -61,7 +61,7 @@ jobs:
             echo "::error::VSCE_PAT secret is not set. Add it under Settings → Secrets and variables → Actions."
             exit 1
           fi
-          npx vsce publish --packagePath "adobe-launch-${GITHUB_REF_NAME}.vsix" --skip-duplicate
+          npx vsce publish --packagePath "launch-tags-editor-${GITHUB_REF_NAME}.vsix" --skip-duplicate
 
       - name: Publish to Open VSX
         env:
@@ -71,7 +71,7 @@ jobs:
             echo "OVSX_PAT not set; skipping Open VSX."
             exit 0
           fi
-          npx --yes ovsx@0.10.1 publish "adobe-launch-${GITHUB_REF_NAME}.vsix" --skip-duplicate
+          npx --yes ovsx@0.10.1 publish "launch-tags-editor-${GITHUB_REF_NAME}.vsix" --skip-duplicate
 
       - name: Publish GitHub Release
         env:
@@ -81,7 +81,7 @@ jobs:
             echo "Release $GITHUB_REF_NAME already exists; skipping."
             exit 0
           fi
-          gh release create "$GITHUB_REF_NAME" "adobe-launch-${GITHUB_REF_NAME}.vsix" \
-            --title "Adobe Launch $GITHUB_REF_NAME" \
+          gh release create "$GITHUB_REF_NAME" "launch-tags-editor-${GITHUB_REF_NAME}.vsix" \
+            --title "Launch Tags Editor $GITHUB_REF_NAME" \
             --generate-notes \
             --verify-tag

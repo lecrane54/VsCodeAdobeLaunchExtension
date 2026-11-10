@@ -79,7 +79,7 @@ export function registerChangeDiff(
         const ref = node?.change;
         const root = mirrorRoot();
         if (!ref || !root) {
-          vscode.window.showWarningMessage('Adobe Launch: nothing to revert for that item.');
+          vscode.window.showWarningMessage('Launch Tags: nothing to revert for that item.');
           return;
         }
         const name = node?.label || path.basename(ref.jsPath ?? ref.jsonPath);
@@ -95,7 +95,7 @@ export function registerChangeDiff(
           const manifest = Manifest.load(root);
           removeCreatedResource(root, manifest, ref);
           manifest.save(root);
-          vscode.window.showInformationMessage(`Adobe Launch: removed "${name}".`);
+          vscode.window.showInformationMessage(`Launch Tags: removed "${name}".`);
           refresh();
           return;
         }
@@ -113,11 +113,11 @@ export function registerChangeDiff(
         }
         if (!revertToBaseline(root, ref.jsonPath, ref.jsPath)) {
           vscode.window.showInformationMessage(
-            'Adobe Launch: no local baseline for this change (it predates tracking), so it can’t be reverted locally.'
+            'Launch Tags: no local baseline for this change (it predates tracking), so it can’t be reverted locally.'
           );
           return;
         }
-        vscode.window.showInformationMessage(`Adobe Launch: reverted "${name}".`);
+        vscode.window.showInformationMessage(`Launch Tags: reverted "${name}".`);
         refresh();
       }
     ),
@@ -125,7 +125,7 @@ export function registerChangeDiff(
     vscode.commands.registerCommand('adobeLaunch.revertAllChanges', async () => {
       const root = mirrorRoot();
       if (!root) {
-        vscode.window.showWarningMessage('Adobe Launch: no active property mirror.');
+        vscode.window.showWarningMessage('Launch Tags: no active property mirror.');
         return;
       }
       const manifest = Manifest.load(root);
@@ -136,7 +136,7 @@ export function registerChangeDiff(
         changes = [];
       }
       if (changes.length === 0) {
-        vscode.window.showInformationMessage('Adobe Launch: no local changes to revert.');
+        vscode.window.showInformationMessage('Launch Tags: no local changes to revert.');
         return;
       }
       const ok = await vscode.window.showWarningMessage(
@@ -164,7 +164,7 @@ export function registerChangeDiff(
       }
       manifest.save(root);
       vscode.window.showInformationMessage(
-        `Adobe Launch: reverted ${reverted}` +
+        `Launch Tags: reverted ${reverted}` +
           (removed ? `, removed ${removed} new` : '') +
           ` change(s)` +
           (skipped ? `; ${skipped} had no baseline and were left as-is.` : '.')
@@ -175,7 +175,7 @@ export function registerChangeDiff(
     vscode.commands.registerCommand('adobeLaunch.diffChange', async (node?: { change?: ChangeRef }) => {
       const ref = node?.change;
       if (!ref) {
-        vscode.window.showWarningMessage('Adobe Launch: nothing to compare for that item.');
+        vscode.window.showWarningMessage('Launch Tags: nothing to compare for that item.');
         return;
       }
 
@@ -183,7 +183,7 @@ export function registerChangeDiff(
       try {
         root = path.join(config.mirrorRoot(), config.activePropertyId());
       } catch {
-        vscode.window.showWarningMessage('Adobe Launch: no active property mirror.');
+        vscode.window.showWarningMessage('Launch Tags: no active property mirror.');
         return;
       }
 
@@ -191,7 +191,7 @@ export function registerChangeDiff(
       // code, otherwise the component/resource .json.
       const working = ref.jsPath ?? ref.jsonPath;
       if (!fs.existsSync(working)) {
-        vscode.window.showWarningMessage('Adobe Launch: the changed file no longer exists.');
+        vscode.window.showWarningMessage('Launch Tags: the changed file no longer exists.');
         return;
       }
 
@@ -205,7 +205,7 @@ export function registerChangeDiff(
       const basePath = baselinePathFor(root, working);
       if (!fs.existsSync(basePath)) {
         vscode.window.showInformationMessage(
-          'Adobe Launch: no local baseline for this change yet. Baselines are captured on pull and push — ' +
+          'Launch Tags: no local baseline for this change yet. Baselines are captured on pull and push — ' +
             'this edit predates tracking, so it will diff after your next pull.'
         );
         return;

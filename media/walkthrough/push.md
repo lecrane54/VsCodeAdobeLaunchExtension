@@ -1,7 +1,7 @@
 ## Edit, review, push
 
 Edit any mirrored file and it appears under **Changes**, with a count badge on
-the Adobe Launch icon in the Activity Bar.
+the Launch Tags icon in the Activity Bar.
 
 For each change you can:
 
