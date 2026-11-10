@@ -21,6 +21,19 @@ export class Config {
     return vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
   }
 
+  /**
+   * Where to save the active property / library. Per workspace when a folder
+   * is open, so each project remembers its own property. With no folder open,
+   * VS Code refuses a workspace write ("Unable to write to Workspace Settings
+   * because no workspace is opened"), so fall back to user settings and let
+   * sign-in and property selection work before a folder is chosen.
+   */
+  private settingsTarget(): vscode.ConfigurationTarget {
+    return vscode.workspace.workspaceFolders?.length
+      ? vscode.ConfigurationTarget.Workspace
+      : vscode.ConfigurationTarget.Global;
+  }
+
   mirrorRoot(): string {
     const cfg = vscode.workspace.getConfiguration('adobeLaunch');
     const override = (cfg.get<string>('mirrorPath') || '').trim();
@@ -68,7 +81,7 @@ export class Config {
     const changed = id !== this.activePropertyId();
     await vscode.workspace
       .getConfiguration('adobeLaunch')
-      .update('activePropertyId', id, vscode.ConfigurationTarget.Workspace);
+      .update('activePropertyId', id, this.settingsTarget());
     // Libraries belong to a property — a stale selection would be wrong.
     if (changed) await this.clearActiveLibrary();
   }
@@ -89,14 +102,14 @@ export class Config {
 
   async setActiveLibrary(id: string, name: string): Promise<void> {
     const cfg = vscode.workspace.getConfiguration('adobeLaunch');
-    await cfg.update('activeLibraryId', id, vscode.ConfigurationTarget.Workspace);
-    await cfg.update('activeLibraryName', name, vscode.ConfigurationTarget.Workspace);
+    await cfg.update('activeLibraryId', id, this.settingsTarget());
+    await cfg.update('activeLibraryName', name, this.settingsTarget());
   }
 
   async clearActiveLibrary(): Promise<void> {
     const cfg = vscode.workspace.getConfiguration('adobeLaunch');
-    await cfg.update('activeLibraryId', '', vscode.ConfigurationTarget.Workspace);
-    await cfg.update('activeLibraryName', '', vscode.ConfigurationTarget.Workspace);
+    await cfg.update('activeLibraryId', '', this.settingsTarget());
+    await cfg.update('activeLibraryName', '', this.settingsTarget());
   }
 
   scopes(): string {

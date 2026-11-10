@@ -752,7 +752,7 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "package": "vsce package --no-rewrite-relative-links --no-dependencies -o launch-tags-editor.vsix",
-    "test": "npm run compile && node test/push.conflicts.test.js && node test/push.subset.test.js && node test/library.revisions.test.js && node test/library.build.test.js && node test/delegates.customcode.test.js && node test/changes.pushrow.test.js && node test/baseline.locked.test.js && node test/client.retry.test.js && node test/client.timeout.test.js && node test/errors.test.js && node test/platform.pull.test.js && node test/platform.mobile.test.js"
+    "test": "npm run compile && node test/push.conflicts.test.js && node test/push.subset.test.js && node test/library.revisions.test.js && node test/library.build.test.js && node test/delegates.customcode.test.js && node test/changes.pushrow.test.js && node test/baseline.locked.test.js && node test/client.retry.test.js && node test/client.timeout.test.js && node test/errors.test.js && node test/platform.pull.test.js && node test/platform.mobile.test.js && node test/config.target.test.js"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

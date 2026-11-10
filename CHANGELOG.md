@@ -2,6 +2,15 @@
 
 All notable changes to Launch Tags Editor for Adobe Experience Platform.
 
+## [Unreleased]
+
+### Fixed
+
+- Choosing a property or library with no folder open no longer fails with
+  "Unable to write to Workspace Settings because no workspace is opened". The
+  choice is saved to user settings instead, and still saved per workspace when
+  a folder is open. Pulling still needs a folder, or `adobeLaunch.mirrorPath`.
+
 ## [0.13.0] — 2026-11-10
 
 ### Added
