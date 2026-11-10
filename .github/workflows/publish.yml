@@ -1,4 +1,4 @@
-name: Release
+name: Publish
 
 # Push a version tag to publish the extension:
 #   1. bump "version" in package.json (e.g. 0.13.0) and commit
@@ -15,7 +15,7 @@ name: Release
 # https://marketplace.visualstudio.com/manage with:
 #   Repository owner: lecrane54
 #   Repository:       VsCodeAdobeLaunchExtension
-#   Workflow:         release.yml
+#   Workflow:         publish.yml
 #   Environment:      (blank)
 # (Azure DevOps "All accessible organizations" PATs, the old VSCE_PAT route,
 # stop working on December 1, 2026.)
