@@ -1,8 +1,17 @@
 name: Release
 
-# Push a version tag to publish a GitHub Release with the packaged extension:
+# Push a version tag to publish the extension:
 #   1. bump "version" in package.json (e.g. 0.13.0) and commit
 #   2. git tag v0.13.0 && git push origin v0.13.0
+#
+# The same .vsix goes to the VS Code Marketplace (so installs auto-update),
+# to Open VSX when an OVSX_PAT secret is set (Cursor, VSCodium, …), and to a
+# GitHub Release. Each publish skips a version that's already up, so a failed
+# run can simply be re-run.
+#
+# Secrets (Settings → Secrets and variables → Actions):
+#   VSCE_PAT  required — Marketplace token for the `lecrane` publisher
+#   OVSX_PAT  optional — Open VSX token for the `lecrane` namespace
 on:
   push:
     tags: ['v*']
@@ -39,13 +48,39 @@ jobs:
       - name: Compile and test
         run: npm test
 
+      # Relative README links are rewritten to GitHub URLs (from `repository`
+      # in package.json) so they work on the Marketplace page.
       - name: Package extension
-        run: npx vsce package --no-rewrite-relative-links --no-dependencies -o "adobe-launch-${GITHUB_REF_NAME}.vsix"
+        run: npx vsce package --no-dependencies -o "adobe-launch-${GITHUB_REF_NAME}.vsix"
+
+      - name: Publish to VS Code Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          if [ -z "$VSCE_PAT" ]; then
+            echo "::error::VSCE_PAT secret is not set. Add it under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          npx vsce publish --packagePath "adobe-launch-${GITHUB_REF_NAME}.vsix" --skip-duplicate
+
+      - name: Publish to Open VSX
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          if [ -z "$OVSX_PAT" ]; then
+            echo "OVSX_PAT not set; skipping Open VSX."
+            exit 0
+          fi
+          npx --yes ovsx@0.10.1 publish "adobe-launch-${GITHUB_REF_NAME}.vsix" --skip-duplicate
 
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists; skipping."
+            exit 0
+          fi
           gh release create "$GITHUB_REF_NAME" "adobe-launch-${GITHUB_REF_NAME}.vsix" \
             --title "Adobe Launch $GITHUB_REF_NAME" \
             --generate-notes \

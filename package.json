@@ -13,6 +13,14 @@
     "vscode": "^1.85.0"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lecrane54/VsCodeAdobeLaunchExtension.git"
+  },
+  "homepage": "https://github.com/lecrane54/VsCodeAdobeLaunchExtension#readme",
+  "bugs": {
+    "url": "https://github.com/lecrane54/VsCodeAdobeLaunchExtension/issues"
+  },
   "categories": [
     "Other",
     "Linters"
