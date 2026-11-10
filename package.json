@@ -717,7 +717,9 @@
         },
         "adobeLaunch.platformSandboxes": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "default": [],
           "description": "AEP sandboxes to pull schemas and Data Prep mappings from (e.g. [\"prod\"]). Empty = every active sandbox."
         },
@@ -755,7 +757,7 @@
   "devDependencies": {
     "@types/node": "^20.11.0",
     "@types/vscode": "^1.85.0",
-    "@vscode/vsce": "^3.9.2",
+    "@vscode/vsce": "^4.1.0",
     "typescript": "^5.3.3"
   }
 }

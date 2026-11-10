@@ -9,8 +9,18 @@ name: Release
 # GitHub Release. Each publish skips a version that's already up, so a failed
 # run can simply be re-run.
 #
+# Marketplace auth is Trusted Publishing (OIDC): GitHub vouches for this
+# workflow, so no Marketplace token is stored anywhere. Set it up once in the
+# `lecrane` publisher's Trusted Publishing tab at
+# https://marketplace.visualstudio.com/manage with:
+#   Repository owner: lecrane54
+#   Repository:       VsCodeAdobeLaunchExtension
+#   Workflow:         release.yml
+#   Environment:      (blank)
+# (Azure DevOps "All accessible organizations" PATs, the old VSCE_PAT route,
+# stop working on December 1, 2026.)
+#
 # Secrets (Settings → Secrets and variables → Actions):
-#   VSCE_PAT  required — Marketplace token for the `lecrane` publisher
 #   OVSX_PAT  optional — Open VSX token for the `lecrane` namespace
 on:
   push:
@@ -18,6 +28,7 @@ on:
 
 permissions:
   contents: write # create the release and upload the .vsix
+  id-token: write # let vsce exchange GitHub's OIDC token for a Marketplace one
 
 jobs:
   release:
@@ -28,7 +39,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       # A v0.13.0 tag on a package.json still saying 0.12.0 would publish a
@@ -53,15 +64,10 @@ jobs:
       - name: Package extension
         run: npx vsce package --no-dependencies -o "launch-tags-editor-${GITHUB_REF_NAME}.vsix"
 
+      # Fails with an authentication error until the Trusted Publishing policy
+      # above exists on the publisher.
       - name: Publish to VS Code Marketplace
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
-        run: |
-          if [ -z "$VSCE_PAT" ]; then
-            echo "::error::VSCE_PAT secret is not set. Add it under Settings → Secrets and variables → Actions."
-            exit 1
-          fi
-          npx vsce publish --packagePath "launch-tags-editor-${GITHUB_REF_NAME}.vsix" --skip-duplicate
+        run: npx vsce publish --oidc --packagePath "launch-tags-editor-${GITHUB_REF_NAME}.vsix" --skip-duplicate
 
       - name: Publish to Open VSX
         env:
