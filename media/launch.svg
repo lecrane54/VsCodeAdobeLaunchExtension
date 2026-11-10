@@ -1,0 +1,15 @@
+<!-- Activity-bar icon. VS Code masks this by alpha, so only the silhouette
+     matters — the arrow is punched out with a mask, not painted. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <mask id="cut">
+    <!-- White = keep, black = punch through. -->
+    <rect width="24" height="24" fill="#fff" />
+    <path d="M12 7.6 16.2 12h-2.5v4.2h-3.4V12H7.8L12 7.6Z" fill="#000" />
+  </mask>
+  <g fill="currentColor" mask="url(#cut)">
+    <circle cx="8.2" cy="12.4" r="4.1" />
+    <circle cx="13" cy="10.1" r="5.3" />
+    <circle cx="17.4" cy="13.4" r="3.9" />
+    <rect x="4.6" y="13.1" width="15" height="4.5" rx="2.25" />
+  </g>
+</svg>
